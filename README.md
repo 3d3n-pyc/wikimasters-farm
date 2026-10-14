@@ -112,3 +112,7 @@ python run.py --accept-only
    - Les cartes communes et doublons sont recyclées en WikiBidous.
    - Un échange est créé en proposant en priorité les cartes manquantes au compte principal, les WB et une carte commune de contrepartie.
 3. **Récolte des échanges** : Le compte principal vérifie que l'émetteur du troc est bien un bot autorisé, valide les contraintes de sécurité et accepte les échanges.
+
+## Licence
+
+Distribué sous licence MIT. Voir `LICENSE` pour plus d'informations.
