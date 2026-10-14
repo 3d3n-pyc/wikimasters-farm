@@ -1,0 +1,17 @@
+[
+  {
+    "email": "main_account@example.com",
+    "password": "your_password_here",
+    "is_target": true
+  },
+  {
+    "email": "bot1@example.com",
+    "password": "your_password_here",
+    "is_target": false
+  },
+  {
+    "email": "bot2@example.com",
+    "password": "your_password_here",
+    "is_target": false
+  }
+]

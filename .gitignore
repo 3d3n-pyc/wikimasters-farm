@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Environments
+.venv/
+venv/
+env/
+
+# Credentials & runtime state
+accounts.json
+data/
+target_collection.json
+known_accounts.json
+last_trade.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
