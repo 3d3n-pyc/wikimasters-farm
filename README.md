@@ -3,6 +3,13 @@
 Bot de farm multi-comptes pour [WikiMasters](https://www.wiki-masters.com).
 
 > **Note / Statut** : Le bot est actuellement détecté dans son état actuel, mais c'est simple à rendre indétectable (ajouter du jitter / délais aléatoires sur les requêtes, rotation de proxies, humanisation Turnstile). Je lâche le projet en l'état car je n'y trouve plus trop d'intérêt avec la hype du jeu qui retombe énormément.
+>
+> ### Pourquoi c'est détecté
+> - **Patterns trop mécaniques** : ouvertures de packs à intervalles réguliers, timing constant, exactement 1 échange par jour par bot au plafond (50 cartes et 700 WB).
+> - **Empreinte réseau** : 40 comptes exécutés depuis la même adresse IP sans rotation de proxies résidentiels.
+> - **Graphe d'échanges évident** : structure en étoile parfaite où 40 bots n'échangent qu'avec un seul et même compte cible.
+>
+> Pour le fiabiliser : randomiser les heures d'exécution, intégrer des proxies rotatifs (1 IP par bot), ajouter du jitter sur chaque action et simuler de l'activité humaine passive.
 
 ## Fonctionnalités
 
