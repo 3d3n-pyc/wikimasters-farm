@@ -2,7 +2,7 @@
 
 Bot de farm multi-comptes pour [WikiMasters](https://www.wiki-masters.com).
 
-> **Note / Statut** : Le bot est actuellement détecté dans son état actuel, mais c'est simple à rendre indétectable (ajouter du jitter / délais aléatoires sur les requêtes, rotation de proxies, humanisation Turnstile). Je lâche le projet en l'état car je n'y trouve plus trop d'intérêt avec la hype du jeu qui retombe énormément.
+> **Note / Statut** : Le bot est actuellement détecté dans son état actuel (pris dans une ban wave pour *"Comptes automatisés"*), mais c'est simple à rendre indétectable. Je lâche le projet en l'état car je n'y trouve plus trop d'intérêt avec la hype du jeu qui retombe énormément.
 >
 > ### Pourquoi c'est détecté
 > - **Patterns trop mécaniques** : ouvertures de packs à intervalles réguliers, timing constant, exactement 1 échange par jour par bot au plafond (50 cartes et 700 WB).
