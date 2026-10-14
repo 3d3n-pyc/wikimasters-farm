@@ -1,103 +1,107 @@
 # wikimasters-farm
 
-Multi-account farming bot for [WikiMasters](https://www.wiki-masters.com).
+Bot de farm multi-comptes pour [WikiMasters](https://www.wiki-masters.com).
 
-Automates daily routines across secondary accounts and transfers progress to a main account:
-- Opening daily booster packs (with automatic Cloudflare Turnstile handling)
-- Claiming completed achievements for WikiBidous (WB)
-- Bulk-discarding duplicate cards (Common, Uncommon, duplicate Rares) into WikiBidous
-- Proposing daily trades to the main account with missing cards and WB
-- Safely accepting incoming trades on the main account while verifying counterparties
+> **Note / Statut** : Le bot est actuellement détecté dans son état actuel, mais c'est simple à rendre indétectable (ajouter du jitter / délais aléatoires sur les requêtes, rotation de proxies, humanisation Turnstile). Je lâche le projet en l'état car je n'y trouve plus trop d'intérêt avec la hype du jeu qui retombe énormément.
 
-## Requirements
+## Fonctionnalités
+
+Automatise les routines quotidiennes sur les comptes secondaires et transfère les gains vers le compte principal :
+- Ouverture automatique des boosters quotidiens (gestion du captcha Cloudflare Turnstile via Camoufox)
+- Récupération des récompenses de succès (WikiBidous / WB)
+- Recyclage en masse des doublons (Communes, Peu Communes, Rares en double) en WikiBidous
+- Envoi automatique d'offres de troc vers le compte principal avec les cartes manquantes et les WB
+- Acceptation sécurisée des trocs entrants sur le compte principal
+
+## Prérequis
 
 - Python 3.10+
-- Firefox dependencies (for Camoufox headless browser)
+- Dépendances Firefox pour Camoufox
 
 ## Installation
 
 ```bash
-git clone https://github.com/your-username/wikimasters-farm.git
+git clone https://github.com/votre-user/wikimasters-farm.git
 cd wikimasters-farm
 
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Download Camoufox browser binaries
+# Télécharger les binaires du navigateur Camoufox
 camoufox fetch
 ```
 
 ## Configuration
 
-Create `accounts.json` at the root of the project:
+Créer un fichier `accounts.json` à la racine :
 
 ```json
 [
   {
-    "email": "main@example.com",
-    "password": "your_password",
+    "email": "principal@example.com",
+    "password": "mot_de_passe",
     "is_target": true
   },
   {
     "email": "bot1@example.com",
-    "password": "your_password",
+    "password": "mot_de_passe",
     "is_target": false
   },
   {
     "email": "bot2@example.com",
-    "password": "your_password",
+    "password": "mot_de_passe",
     "is_target": false
   }
 ]
 ```
 
-- Exactly one account must have `"is_target": true` (the main account receiving cards/WB).
-- All other accounts are farm bots.
+- Un seul compte doit avoir `"is_target": true` (le compte principal qui reçoit les cartes et WB).
+- Tous les autres comptes sont les bots de farm.
 
-## Usage
+## Utilisation
 
-Run the full pipeline:
+Lancer la pipeline complète :
 
 ```bash
 python run.py
 ```
 
-### CLI Options
+### Options CLI
 
-| Flag | Description |
+| Option | Description |
 |---|---|
-| `--limit N`, `-l N` | Run only on the first N farm accounts |
-| `--accounts a@b.com ...`, `-a ...` | Filter run to specific account emails |
-| `--concurrency N`, `-c N` | Number of accounts processed concurrently (default: 3) |
-| `--skip-packs` | Skip opening booster packs |
-| `--skip-trades` | Skip proposing and accepting trades |
-| `--accept-only` | Only accept pending trades on the main account |
-| `--sync-target` | Refresh the main account collection cache |
-| `--force-trade` | Bypass daily trade limits and force proposals |
-| `--debug` | Enable verbose debug logging |
+| `--limit N`, `-l N` | Limite l'exécution à N comptes de farm |
+| `--accounts email ...`, `-a ...` | Exécute uniquement sur des comptes spécifiques |
+| `--concurrency N`, `-c N` | Nombre de comptes traités en parallèle (défaut: 3) |
+| `--skip-packs` | Ne pas ouvrir les boosters |
+| `--skip-trades` | Ne pas envoyer/accepter d'échanges |
+| `--accept-only` | Uniquement accepter les trocs en attente sur le compte principal |
+| `--sync-target` | Rafraîchir le cache de la collection du compte principal |
+| `--force-trade` | Forcer l'envoi des trocs même si le quota du jour est atteint |
+| `--debug` | Activer les logs de debug détaillés |
 
-### Examples
+### Exemples
 
 ```bash
-# Test run on 2 bots
+# Test rapide sur 2 bots
 python run.py --limit 2
 
-# Fast run without opening packs (discard + trade only)
+# Exécution sans boosters (uniquement recyclage + trocs)
 python run.py --skip-packs
 
-# Accept incoming trades on main
+# Accepter les trocs en attente sur le compte principal
 python run.py --accept-only
 ```
 
-## How It Works
+## Fonctionnement
 
-1. **Target Setup**: Initializes the main account session, auto-accepts pending friend requests, opens packs, and refreshes the local card cache.
-2. **Concurrent Farming**:
-   - Each bot connects via fast HTTP requests using cached Supabase JWT sessions.
-   - If Cloudflare Turnstile anti-bot verification is triggered, Camoufox is launched headlessly to solve it.
-   - Booster packs are opened with rate-limit backoff.
-   - Unlocked achievements are claimed for WB.
-   - Excess/duplicate cards are discarded into WB.
-   - A trade offer is constructed prioritizing missing cards for the target, attaching WB and a token Common card to respect game trade rules.
-3. **Trade Harvesting**: The main account reviews incoming trades, checks that the initiator is an authorized farm account, verifies safety constraints, and accepts them.
+1. **Initialisation du compte cible** : Connexion, acceptation des demandes d'amis des bots, ouverture de ses boosters et mise en cache locale des cartes possédées.
+2. **Farm en parallèle** :
+   - Chaque bot se connecte via requêtes HTTP en réutilisant les sessions JWT Supabase en cache.
+   - Si un challenge Turnstile apparaît, Camoufox est lancé en headless pour le valider.
+   - Les boosters sont ouverts (avec gestion du backoff en cas de rate-limit).
+   - Les succès débloqués sont réclamés.
+   - Les cartes communes et doublons sont recyclées en WikiBidous.
+   - Un échange est créé en proposant en priorité les cartes manquantes au compte principal, les WB et une carte commune de contrepartie.
+3. **Récolte des échanges** : Le compte principal vérifie que l'émetteur du troc est bien un bot autorisé, valide les contraintes de sécurité et accepte les échanges.
